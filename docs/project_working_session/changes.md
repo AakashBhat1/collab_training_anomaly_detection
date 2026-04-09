@@ -9,14 +9,19 @@
   - `.gitignore` added `.venv/` and `.pytest_cache/` entries.
   - `docs/project_working_session/REPO_CONTEXT.md` updated architecture overview with `scripts/` and `notebooks/` organization.
   - `docs/project_working_session/CURRENT_STEP.md` updated notebook path.
+- Added:
+  - `device.py` — TPU/GPU/CPU auto-detection with `torch_xla` fallback and TPU-aware optimizer step.
 - Notes:
-  - Python source modules and imports unchanged — the package structure (`from collab_scripts.xxx`) is unaffected.
   - Shell scripts, notebook, and non-Python files are no longer mixed with Python modules at package root.
+  - Added TPU (free Colab) support: `train_action_model.py` and `evaluate_action_model.py` now use `device.py` for device detection and TPU-safe optimizer steps.
+  - DataLoader `num_workers` set to 0 on TPU to avoid multiprocess issues.
+  - Removed pinned `torch`/`torchvision`/`torchaudio` from `requirements-colab.txt` — Colab provides matched versions and overwriting them breaks `torch_xla` on TPU.
+  - `.gitignore` expanded to exclude `.claude/`, IDE configs, OS files, and other dev-only artifacts from the repo.
 - Verification:
   - `bash -n scripts/*.sh` => syntax check.
-  - `python -m pytest collab_scripts/tests -q` => existing tests.
+  - `python -c "import ast; ast.parse(...)"` => all modified .py files parse clean.
 - Security/behavior impact:
-  - No logic or auth changes. File reorganization only.
+  - No auth or secret changes. Device selection is automatic; training behavior unchanged on GPU/CPU.
 
 ## Pass 2026-04-09-01
 - Updated:

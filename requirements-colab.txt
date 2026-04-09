@@ -1,6 +1,6 @@
-torch==2.5.1
-torchvision==0.20.1
-torchaudio==2.5.1
+# torch, torchvision, torchaudio are pre-installed on Colab (GPU and TPU).
+# Do NOT pin them here — Colab's runtime ships matched versions and
+# overwriting them breaks torch_xla on TPU runtimes.
 numpy==1.26.4
 pillow==10.2.0
 opencv-python-headless==4.10.0.84

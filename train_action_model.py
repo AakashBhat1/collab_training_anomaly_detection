@@ -15,6 +15,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader
 
 from collab_scripts.config_schema import PipelineConfig, load_pipeline_config
+from collab_scripts.device import get_device, is_xla_device, optimizer_step
 from collab_scripts.model import CNNLSTM
 from collab_scripts.training_data import ActionClipDataset
 
@@ -89,7 +90,7 @@ def _train_one_epoch(
         logits = model(clips)
         loss = loss_fn(logits, labels)
         loss.backward()
-        optimizer.step()
+        optimizer_step(optimizer, device)
 
         total_loss += float(loss.item())
         total_batches += 1
@@ -177,10 +178,13 @@ def main() -> None:
         train=False,
     )
 
-    train_loader = DataLoader(train_dataset, batch_size=config.batch_size, shuffle=True, num_workers=2)
-    val_loader = DataLoader(val_dataset, batch_size=config.batch_size, shuffle=False, num_workers=2)
+    device = get_device()
+    loader_workers = 0 if is_xla_device(device) else 2
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    train_loader = DataLoader(train_dataset, batch_size=config.batch_size, shuffle=True, num_workers=loader_workers)
+    val_loader = DataLoader(val_dataset, batch_size=config.batch_size, shuffle=False, num_workers=loader_workers)
+
+    print(f"Using device: {device}")
     model = CNNLSTM(num_classes=len(config.classes))
     model.to(device)
 

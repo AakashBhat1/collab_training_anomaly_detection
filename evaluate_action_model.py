@@ -9,6 +9,7 @@ from sklearn.metrics import classification_report, confusion_matrix, recall_scor
 from torch.utils.data import DataLoader
 
 from collab_scripts.config_schema import load_pipeline_config
+from collab_scripts.device import get_device, is_xla_device
 from collab_scripts.model import CNNLSTM
 from collab_scripts.training_data import ActionClipDataset
 
@@ -43,7 +44,8 @@ def main() -> None:
     if not checkpoint_path.exists():
         raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}")
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = get_device()
+    loader_workers = 0 if is_xla_device(device) else 2
 
     test_dataset = ActionClipDataset(
         split_dir=Path(config.paths.dataset_dir) / "test",
@@ -52,7 +54,7 @@ def main() -> None:
         image_size=config.crop_size,
         train=False,
     )
-    test_loader = DataLoader(test_dataset, batch_size=config.batch_size, shuffle=False, num_workers=2)
+    test_loader = DataLoader(test_dataset, batch_size=config.batch_size, shuffle=False, num_workers=loader_workers)
 
     model = CNNLSTM(num_classes=len(config.classes))
     checkpoint = torch.load(checkpoint_path, map_location="cpu")

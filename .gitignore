@@ -1,13 +1,35 @@
+# Python
 __pycache__/
 *.pyc
+*.pyo
+
+# Local dev environment
+.venv/
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code local config
+.claude/
+
+# Training artifacts (generated on Colab, not checked in)
 *.pt
 *.onnx
 *.xml
 *.bin
 *.jsonl
-.venv/
-.pytest_cache/
 checkpoints/
 artifacts/
 dataset/
 raw_dataset/
+
+# OS files
+.DS_Store
+Thumbs.db

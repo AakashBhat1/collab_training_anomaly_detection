@@ -10,6 +10,8 @@
 - Data preparation:
   - `dataset_split.py` discovers clips, plans deterministic train/val/test splits, materializes frame directories, and writes `split_manifest.json`.
   - `prepare_dataset.py` orchestrates split + materialization from config.
+- Device detection:
+  - `device.py` provides TPU/GPU/CPU auto-detection and TPU-aware optimizer step.
 - Training/eval/export:
   - `training_data.py` loads frame-sequence clips for model input.
   - `model.py` defines the CNN+LSTM classifier.
@@ -29,7 +31,8 @@
 ## Key Dependencies
 | Package | Purpose |
 |---------|---------|
-| torch/torchvision/torchaudio | training model and tensor ops |
+| torch/torchvision/torchaudio | training model and tensor ops (pre-installed on Colab, not pinned) |
+| torch_xla | TPU device support (pre-installed on Colab TPU runtimes) |
 | scikit-learn | recall/report/confusion metrics |
 | pillow | image loading |
 | opencv-python-headless | mp4-to-frame extraction during dataset prep |
@@ -38,7 +41,7 @@
 | pytest/pytest-cov | contract tests and coverage checks |
 
 ## Environment
-- Language/runtime: Python 3.13 in local venv, Colab Python for training runs.
+- Language/runtime: Python 3.13 in local venv, Colab Python for training runs (TPU and GPU supported).
 - Package manager: pip.
 - Test command:
   - Focused: `python -m pytest collab_scripts/tests -k split -q`
