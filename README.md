@@ -65,6 +65,13 @@ bash collab_scripts/colab_clone_and_bootstrap.sh \
 # 2) run split/train/eval/export with auto-resume
 bash collab_scripts/colab_run_training.sh /content/intruder_detection_system
 
+# optional: pull dataset from Kaggle before training
+bash collab_scripts/colab_run_training.sh \
+  /content/intruder_detection_system \
+  --config collab_scripts/pipeline_config.json \
+  --kaggle-dataset <owner>/<dataset-slug> \
+  --kaggle-clean
+
 # with explicit config and passthrough pipeline flags
 bash collab_scripts/colab_run_training.sh \
   /content/intruder_detection_system \
@@ -81,6 +88,19 @@ Helper scripts added in this package:
 - `collab_scripts/colab_clone_and_bootstrap.sh`
 - `collab_scripts/colab_run_training.sh`
 - `collab_scripts/colab_export_artifacts.sh`
+- `collab_scripts/colab_pull_kaggle_dataset.sh`
+
+Kaggle credentials:
+- Set `KAGGLE_USERNAME` and `KAGGLE_KEY` environment variables in Colab, or
+- place `kaggle.json` at `~/.kaggle/kaggle.json` with correct permissions.
+
+KaggleHub support:
+- `requirements-colab.txt` now includes `kagglehub[pandas-datasets]`.
+- The automation notebook includes optional `kagglehub.load_dataset(...)` support using your dataset slug and file path.
+- In `colab_training_automation.ipynb`, set:
+  - `USE_KAGGLEHUB_PANDAS_PREVIEW = True`
+  - `KAGGLEHUB_FILE_PATH = "<path-inside-dataset>"`
+  - optional `KAGGLEHUB_SQL_QUERY`
 
 If using Drive-backed checkpoint resume:
 

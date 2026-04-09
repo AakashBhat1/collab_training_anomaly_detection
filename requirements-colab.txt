@@ -6,6 +6,8 @@ pillow==10.2.0
 opencv-python-headless==4.10.0.84
 scikit-learn==1.5.2
 tqdm==4.66.5
+kaggle==1.7.4.5
+kagglehub[pandas-datasets]==0.3.12
 onnx==1.17.0
 openvino==2024.6.0
 openvino-dev==2024.6.0

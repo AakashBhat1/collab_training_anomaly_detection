@@ -67,3 +67,27 @@
 - Security/behavior impact:
   - No backend runtime behavior changed.
   - Added automation only for Colab execution/handoff workflow.
+
+## Pass 2026-04-09-04
+- Updated:
+  - `colab_run_training.sh`
+  - `colab_training_automation.ipynb`
+  - `requirements-colab.txt`
+  - `README.md`
+  - `docs/project_working_session/REPO_CONTEXT.md`
+  - `docs/project_working_session/CURRENT_STEP.md`
+  - `docs/project_working_session/changes.md`
+- Added:
+  - `colab_pull_kaggle_dataset.sh`
+- Notes:
+  - Added optional automatic Kaggle dataset pull support to `colab_run_training.sh` via `--kaggle-dataset`, `--raw-dataset-dir`, and `--kaggle-clean` flags.
+  - Added `colab_pull_kaggle_dataset.sh` to download and unpack Kaggle datasets into the configured raw dataset path.
+  - Updated notebook defaults to use dataset slug `webadvisor/real-time-anomaly-detection-in-cctv-surveillance` and added optional `kagglehub.load_dataset` pandas preview cell based on user-provided pattern.
+  - Added `kagglehub[pandas-datasets]` dependency and updated README with KaggleHub usage settings.
+- Verification:
+  - `bash -n colab_pull_kaggle_dataset.sh; bash -n colab_run_training.sh` => success.
+  - `python -m pytest collab_scripts/tests -q` => 17 passed.
+  - Notebook JSON validation with Python `json.load` => success.
+- Security/behavior impact:
+  - No auth logic changes beyond optional Kaggle env var usage in notebook/session.
+  - Training pipeline behavior unchanged unless Kaggle pull flags are explicitly enabled.

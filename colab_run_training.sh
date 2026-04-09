@@ -9,6 +9,9 @@ fi
 
 CONFIG_PATH=""
 AUTO_RESUME=true
+KAGGLE_DATASET=""
+RAW_DATASET_DIR=""
+KAGGLE_CLEAN=false
 EXTRA_ARGS=()
 
 while [[ $# -gt 0 ]]; do
@@ -25,6 +28,26 @@ while [[ $# -gt 0 ]]; do
       AUTO_RESUME=false
       shift
       ;;
+    --kaggle-dataset)
+      if [[ $# -lt 2 ]]; then
+        echo "Missing value for --kaggle-dataset" >&2
+        exit 1
+      fi
+      KAGGLE_DATASET="$2"
+      shift 2
+      ;;
+    --raw-dataset-dir)
+      if [[ $# -lt 2 ]]; then
+        echo "Missing value for --raw-dataset-dir" >&2
+        exit 1
+      fi
+      RAW_DATASET_DIR="$2"
+      shift 2
+      ;;
+    --kaggle-clean)
+      KAGGLE_CLEAN=true
+      shift
+      ;;
     *)
       EXTRA_ARGS+=("$1")
       shift
@@ -35,9 +58,11 @@ done
 if [[ -d "${REPO_ROOT}/backend/collab_scripts" ]]; then
   WORK_ROOT="${REPO_ROOT}/backend"
   DEFAULT_CONFIG="collab_scripts/pipeline_config.json"
+  PULL_SCRIPT="${REPO_ROOT}/backend/collab_scripts/colab_pull_kaggle_dataset.sh"
 elif [[ -d "${REPO_ROOT}/collab_scripts" ]]; then
   WORK_ROOT="${REPO_ROOT}"
   DEFAULT_CONFIG="collab_scripts/pipeline_config.json"
+  PULL_SCRIPT="${REPO_ROOT}/collab_scripts/colab_pull_kaggle_dataset.sh"
 else
   echo "Could not find collab_scripts in ${REPO_ROOT}" >&2
   exit 1
@@ -52,6 +77,35 @@ cd "${WORK_ROOT}"
 if [[ ! -f "${CONFIG_PATH}" ]]; then
   echo "Config file not found from ${WORK_ROOT}: ${CONFIG_PATH}" >&2
   exit 1
+fi
+
+if [[ -n "${KAGGLE_DATASET}" ]]; then
+  if [[ ! -f "${PULL_SCRIPT}" ]]; then
+    echo "Kaggle pull script not found: ${PULL_SCRIPT}" >&2
+    exit 1
+  fi
+
+  if [[ -z "${RAW_DATASET_DIR}" ]]; then
+    RAW_DATASET_DIR="$(python - "${CONFIG_PATH}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+config_path = Path(sys.argv[1])
+config = json.loads(config_path.read_text(encoding='utf-8'))
+raw_dir = str(config.get('paths', {}).get('raw_dataset_dir', '/content/raw_dataset'))
+print(raw_dir)
+PY
+)"
+  fi
+
+  PULL_COMMAND=(bash "${PULL_SCRIPT}" "${KAGGLE_DATASET}" "${RAW_DATASET_DIR}")
+  if [[ "${KAGGLE_CLEAN}" == true ]]; then
+    PULL_COMMAND+=(--clean)
+  fi
+
+  echo "Pulling dataset from Kaggle: ${KAGGLE_DATASET}"
+  "${PULL_COMMAND[@]}"
 fi
 
 echo "Running pipeline from ${WORK_ROOT} with config ${CONFIG_PATH}"
