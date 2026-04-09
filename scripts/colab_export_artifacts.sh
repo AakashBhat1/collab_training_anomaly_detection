@@ -1,19 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT="${1:-/content/collab_training_anomaly_detection}"
+REPO_ROOT="${1:-/content/collab_scripts}"
 OUTPUT_ARCHIVE="${2:-/content/action_model_export.tgz}"
 
-if [[ -d "${REPO_ROOT}/backend/collab_scripts" ]]; then
-  WORK_ROOT="${REPO_ROOT}/backend"
-  CONFIG_PATH="${WORK_ROOT}/collab_scripts/pipeline_config.json"
-elif [[ -d "${REPO_ROOT}/collab_scripts" ]]; then
-  WORK_ROOT="${REPO_ROOT}"
-  CONFIG_PATH="${WORK_ROOT}/collab_scripts/pipeline_config.json"
-else
-  echo "Could not find collab_scripts in ${REPO_ROOT}" >&2
-  exit 1
-fi
+CONFIG_PATH="${REPO_ROOT}/pipeline_config.json"
 
 if [[ ! -f "${CONFIG_PATH}" ]]; then
   echo "Config not found: ${CONFIG_PATH}" >&2

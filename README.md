@@ -40,55 +40,47 @@ Prepared split output (generated automatically):
 From Colab:
 
 ```bash
-git clone <your-repo-url> /content/collab_training_anomaly_detection
-cd /content/collab_training_anomaly_detection
-bash backend/collab_scripts/scripts/bootstrap_colab.sh /content/collab_training_anomaly_detection
-```
-
-If `collab_scripts` is at repository root (no `backend/` folder):
-
-```bash
-git clone <your-repo-url> /content/collab_training_anomaly_detection
-cd /content/collab_training_anomaly_detection
-bash collab_scripts/scripts/bootstrap_colab.sh /content/collab_training_anomaly_detection
+git clone <your-repo-url> /content/collab_scripts
+cd /content/collab_scripts
+bash scripts/bootstrap_colab.sh /content/collab_scripts
 ```
 
 GitHub-first helper scripts (recommended):
 
 ```bash
 # 1) clone + bootstrap from GitHub
-bash collab_scripts/scripts/colab_clone_and_bootstrap.sh \
+bash scripts/colab_clone_and_bootstrap.sh \
   https://github.com/<org>/<repo>.git \
-  /content/collab_training_anomaly_detection \
+  /content/collab_scripts \
   main
 
 # 2) run split/train/eval/export with auto-resume
-bash collab_scripts/scripts/colab_run_training.sh /content/collab_training_anomaly_detection
+bash scripts/colab_run_training.sh /content/collab_scripts
 
 # optional: pull dataset from Kaggle before training
-bash collab_scripts/scripts/colab_run_training.sh \
-  /content/collab_training_anomaly_detection \
+bash scripts/colab_run_training.sh \
+  /content/collab_scripts \
   --config collab_scripts/pipeline_config.json \
   --kaggle-dataset <owner>/<dataset-slug> \
   --kaggle-clean
 
 # with explicit config and passthrough pipeline flags
-bash collab_scripts/scripts/colab_run_training.sh \
-  /content/collab_training_anomaly_detection \
+bash scripts/colab_run_training.sh \
+  /content/collab_scripts \
   --config collab_scripts/pipeline_config.json \
   --skip-export
 
 # 3) package outputs for download/handoff
-bash collab_scripts/scripts/colab_export_artifacts.sh \
-  /content/collab_training_anomaly_detection \
+bash scripts/colab_export_artifacts.sh \
+  /content/collab_scripts \
   /content/action_model_export.tgz
 ```
 
 Helper scripts added in this package:
-- `collab_scripts/scripts/colab_clone_and_bootstrap.sh`
-- `collab_scripts/scripts/colab_run_training.sh`
-- `collab_scripts/scripts/colab_export_artifacts.sh`
-- `collab_scripts/scripts/colab_pull_kaggle_dataset.sh`
+- `scripts/colab_clone_and_bootstrap.sh`
+- `scripts/colab_run_training.sh`
+- `scripts/colab_export_artifacts.sh`
+- `scripts/colab_pull_kaggle_dataset.sh`
 
 Kaggle credentials:
 - Set `KAGGLE_USERNAME` and `KAGGLE_KEY` environment variables in Colab, or
@@ -111,9 +103,8 @@ drive.mount("/content/drive")
 
 ## 3) Configure Paths/Hyperparams
 
-Edit the config file that matches your layout:
-- backend layout: `backend/collab_scripts/pipeline_config.json`
-- root layout: `collab_scripts/pipeline_config.json`
+Edit:
+- `collab_scripts/pipeline_config.json`
 
 Important fields:
 - `paths.raw_dataset_dir`
@@ -126,8 +117,8 @@ Important fields:
 ## 4) Run Full Pipeline
 
 Run from the parent of the `collab_scripts` package:
-- backend layout: `/content/collab_training_anomaly_detection/backend`
-- root layout: `/content/collab_training_anomaly_detection`
+- backend layout: `/content/collab_scripts/backend`
+- root layout: `/content/collab_scripts`
 
 ```bash
 python -m collab_scripts.run_pipeline --auto-resume

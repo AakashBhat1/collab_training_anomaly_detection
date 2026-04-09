@@ -2,11 +2,11 @@
 set -euo pipefail
 
 # ── Usage ────────────────────────────────────────────────────────────
-# bash collab_setup.sh <github_repo_url> [options]
+# bash colab_setup.sh <github_repo_url> [options]
 #
 # Options:
 #   --branch <branch>             Git branch (default: main)
-#   --repo-dir <path>             Clone target (default: /content/collab_training_anomaly_detection)
+#   --repo-dir <path>             Clone target (default: /content/collab_scripts)
 #   --raw-dataset-dir <path>      Raw clips location (default: /content/raw_dataset)
 #   --dataset-dir <path>          Prepared splits (default: /content/dataset)
 #   --checkpoint-dir <path>       Local checkpoints (default: /content/checkpoints)
@@ -24,7 +24,7 @@ fi
 REPO_URL="$1"; shift
 
 BRANCH="main"
-REPO_DIR="/content/collab_training_anomaly_detection"
+REPO_DIR="/content/collab_scripts"
 RAW_DATASET_DIR="/content/raw_dataset"
 DATASET_DIR="/content/dataset"
 CHECKPOINT_DIR="/content/checkpoints"
@@ -58,26 +58,16 @@ else
 fi
 
 # ── 2. Bootstrap (install deps) ─────────────────────────────────────
-if [[ -f "${REPO_DIR}/scripts/bootstrap_colab.sh" ]]; then
-  BOOTSTRAP="${REPO_DIR}/scripts/bootstrap_colab.sh"
-elif [[ -f "${REPO_DIR}/backend/collab_scripts/scripts/bootstrap_colab.sh" ]]; then
-  BOOTSTRAP="${REPO_DIR}/backend/collab_scripts/scripts/bootstrap_colab.sh"
-elif [[ -f "${REPO_DIR}/collab_scripts/scripts/bootstrap_colab.sh" ]]; then
-  BOOTSTRAP="${REPO_DIR}/collab_scripts/scripts/bootstrap_colab.sh"
-else
-  echo "Could not find scripts/bootstrap_colab.sh" >&2; exit 1
+BOOTSTRAP="${REPO_DIR}/scripts/bootstrap_colab.sh"
+if [[ ! -f "${BOOTSTRAP}" ]]; then
+  echo "Could not find bootstrap_colab.sh at ${BOOTSTRAP}" >&2; exit 1
 fi
 bash "${BOOTSTRAP}" "${REPO_DIR}"
 
-# ── 3. Locate and update pipeline config ─────────────────────────────
-if [[ -f "${REPO_DIR}/pipeline_config.json" ]]; then
-  CONFIG_PATH="${REPO_DIR}/pipeline_config.json"
-elif [[ -f "${REPO_DIR}/backend/collab_scripts/pipeline_config.json" ]]; then
-  CONFIG_PATH="${REPO_DIR}/backend/collab_scripts/pipeline_config.json"
-elif [[ -f "${REPO_DIR}/collab_scripts/pipeline_config.json" ]]; then
-  CONFIG_PATH="${REPO_DIR}/collab_scripts/pipeline_config.json"
-else
-  echo "pipeline_config.json not found" >&2; exit 1
+# ── 3. Update pipeline config ───────────────────────────────────────
+CONFIG_PATH="${REPO_DIR}/pipeline_config.json"
+if [[ ! -f "${CONFIG_PATH}" ]]; then
+  echo "pipeline_config.json not found at ${CONFIG_PATH}" >&2; exit 1
 fi
 
 python3 - "${CONFIG_PATH}" "${RAW_DATASET_DIR}" "${DATASET_DIR}" \
@@ -101,14 +91,9 @@ PY
 
 # ── 4. Optional Kaggle dataset pull ──────────────────────────────────
 if [[ -n "${KAGGLE_DATASET}" ]]; then
-  if [[ -f "${REPO_DIR}/scripts/colab_pull_kaggle_dataset.sh" ]]; then
-    PULL_SCRIPT="${REPO_DIR}/scripts/colab_pull_kaggle_dataset.sh"
-  elif [[ -f "${REPO_DIR}/backend/collab_scripts/scripts/colab_pull_kaggle_dataset.sh" ]]; then
-    PULL_SCRIPT="${REPO_DIR}/backend/collab_scripts/scripts/colab_pull_kaggle_dataset.sh"
-  elif [[ -f "${REPO_DIR}/collab_scripts/scripts/colab_pull_kaggle_dataset.sh" ]]; then
-    PULL_SCRIPT="${REPO_DIR}/collab_scripts/scripts/colab_pull_kaggle_dataset.sh"
-  else
-    echo "colab_pull_kaggle_dataset.sh not found" >&2; exit 1
+  PULL_SCRIPT="${REPO_DIR}/scripts/colab_pull_kaggle_dataset.sh"
+  if [[ ! -f "${PULL_SCRIPT}" ]]; then
+    echo "colab_pull_kaggle_dataset.sh not found at ${PULL_SCRIPT}" >&2; exit 1
   fi
 
   PULL_CMD=(bash "${PULL_SCRIPT}" "${KAGGLE_DATASET}" --raw-dataset-dir "${RAW_DATASET_DIR}")

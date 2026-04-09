@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT="/content/collab_training_anomaly_detection"
+REPO_ROOT="/content/collab_scripts"
 if [[ $# -gt 0 && "${1}" != -* ]]; then
   REPO_ROOT="$1"
   shift
@@ -55,23 +55,9 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -f "${REPO_ROOT}/__init__.py" ]]; then
-  # Repo root IS the collab_scripts package — run from parent
-  WORK_ROOT="$(cd "${REPO_ROOT}/.." && pwd)"
-  DEFAULT_CONFIG="$(basename "${REPO_ROOT}")/pipeline_config.json"
-  PULL_SCRIPT="${REPO_ROOT}/scripts/colab_pull_kaggle_dataset.sh"
-elif [[ -d "${REPO_ROOT}/backend/collab_scripts" ]]; then
-  WORK_ROOT="${REPO_ROOT}/backend"
-  DEFAULT_CONFIG="collab_scripts/pipeline_config.json"
-  PULL_SCRIPT="${REPO_ROOT}/backend/collab_scripts/scripts/colab_pull_kaggle_dataset.sh"
-elif [[ -d "${REPO_ROOT}/collab_scripts" ]]; then
-  WORK_ROOT="${REPO_ROOT}"
-  DEFAULT_CONFIG="collab_scripts/pipeline_config.json"
-  PULL_SCRIPT="${REPO_ROOT}/collab_scripts/scripts/colab_pull_kaggle_dataset.sh"
-else
-  echo "Could not find collab_scripts in ${REPO_ROOT}" >&2
-  exit 1
-fi
+# Repo root IS the package — run python -m from parent dir
+WORK_ROOT="$(cd "${REPO_ROOT}/.." && pwd)"
+DEFAULT_CONFIG="${REPO_ROOT}/pipeline_config.json"
 
 if [[ -z "${CONFIG_PATH}" ]]; then
   CONFIG_PATH="${DEFAULT_CONFIG}"
@@ -80,11 +66,12 @@ fi
 cd "${WORK_ROOT}"
 
 if [[ ! -f "${CONFIG_PATH}" ]]; then
-  echo "Config file not found from ${WORK_ROOT}: ${CONFIG_PATH}" >&2
+  echo "Config file not found: ${CONFIG_PATH}" >&2
   exit 1
 fi
 
 if [[ -n "${KAGGLE_DATASET}" ]]; then
+  PULL_SCRIPT="${REPO_ROOT}/scripts/colab_pull_kaggle_dataset.sh"
   if [[ ! -f "${PULL_SCRIPT}" ]]; then
     echo "Kaggle pull script not found: ${PULL_SCRIPT}" >&2
     exit 1
@@ -114,7 +101,7 @@ PY
 fi
 
 echo "Running pipeline from ${WORK_ROOT} with config ${CONFIG_PATH}"
-COMMAND=(python -m collab_scripts.run_pipeline --config "${CONFIG_PATH}")
+COMMAND=(python -m "${PACKAGE_NAME}.run_pipeline" --config "${CONFIG_PATH}")
 if [[ "${AUTO_RESUME}" == true ]]; then
   COMMAND+=(--auto-resume)
 fi
