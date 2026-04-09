@@ -55,7 +55,12 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -d "${REPO_ROOT}/backend/collab_scripts" ]]; then
+if [[ -f "${REPO_ROOT}/__init__.py" ]]; then
+  # Repo root IS the collab_scripts package — run from parent
+  WORK_ROOT="$(cd "${REPO_ROOT}/.." && pwd)"
+  DEFAULT_CONFIG="$(basename "${REPO_ROOT}")/pipeline_config.json"
+  PULL_SCRIPT="${REPO_ROOT}/scripts/colab_pull_kaggle_dataset.sh"
+elif [[ -d "${REPO_ROOT}/backend/collab_scripts" ]]; then
   WORK_ROOT="${REPO_ROOT}/backend"
   DEFAULT_CONFIG="collab_scripts/pipeline_config.json"
   PULL_SCRIPT="${REPO_ROOT}/backend/collab_scripts/scripts/colab_pull_kaggle_dataset.sh"

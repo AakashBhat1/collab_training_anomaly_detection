@@ -58,7 +58,9 @@ else
 fi
 
 # ── 2. Bootstrap (install deps) ─────────────────────────────────────
-if [[ -f "${REPO_DIR}/backend/collab_scripts/scripts/bootstrap_colab.sh" ]]; then
+if [[ -f "${REPO_DIR}/scripts/bootstrap_colab.sh" ]]; then
+  BOOTSTRAP="${REPO_DIR}/scripts/bootstrap_colab.sh"
+elif [[ -f "${REPO_DIR}/backend/collab_scripts/scripts/bootstrap_colab.sh" ]]; then
   BOOTSTRAP="${REPO_DIR}/backend/collab_scripts/scripts/bootstrap_colab.sh"
 elif [[ -f "${REPO_DIR}/collab_scripts/scripts/bootstrap_colab.sh" ]]; then
   BOOTSTRAP="${REPO_DIR}/collab_scripts/scripts/bootstrap_colab.sh"
@@ -68,7 +70,9 @@ fi
 bash "${BOOTSTRAP}" "${REPO_DIR}"
 
 # ── 3. Locate and update pipeline config ─────────────────────────────
-if [[ -f "${REPO_DIR}/backend/collab_scripts/pipeline_config.json" ]]; then
+if [[ -f "${REPO_DIR}/pipeline_config.json" ]]; then
+  CONFIG_PATH="${REPO_DIR}/pipeline_config.json"
+elif [[ -f "${REPO_DIR}/backend/collab_scripts/pipeline_config.json" ]]; then
   CONFIG_PATH="${REPO_DIR}/backend/collab_scripts/pipeline_config.json"
 elif [[ -f "${REPO_DIR}/collab_scripts/pipeline_config.json" ]]; then
   CONFIG_PATH="${REPO_DIR}/collab_scripts/pipeline_config.json"
@@ -97,7 +101,9 @@ PY
 
 # ── 4. Optional Kaggle dataset pull ──────────────────────────────────
 if [[ -n "${KAGGLE_DATASET}" ]]; then
-  if [[ -f "${REPO_DIR}/backend/collab_scripts/scripts/colab_pull_kaggle_dataset.sh" ]]; then
+  if [[ -f "${REPO_DIR}/scripts/colab_pull_kaggle_dataset.sh" ]]; then
+    PULL_SCRIPT="${REPO_DIR}/scripts/colab_pull_kaggle_dataset.sh"
+  elif [[ -f "${REPO_DIR}/backend/collab_scripts/scripts/colab_pull_kaggle_dataset.sh" ]]; then
     PULL_SCRIPT="${REPO_DIR}/backend/collab_scripts/scripts/colab_pull_kaggle_dataset.sh"
   elif [[ -f "${REPO_DIR}/collab_scripts/scripts/colab_pull_kaggle_dataset.sh" ]]; then
     PULL_SCRIPT="${REPO_DIR}/collab_scripts/scripts/colab_pull_kaggle_dataset.sh"
@@ -116,4 +122,4 @@ echo ""
 echo "===== Setup complete ====="
 echo "Repo:       ${REPO_DIR}"
 echo "Config:     ${CONFIG_PATH}"
-echo "Next: bash <repo>/collab_scripts/scripts/colab_run_training.sh ${REPO_DIR}"
+echo "Next: bash ${REPO_DIR}/scripts/colab_run_training.sh ${REPO_DIR}"
