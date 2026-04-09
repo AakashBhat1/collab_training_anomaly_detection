@@ -64,9 +64,10 @@ if [[ -z "${KAGGLE_USERNAME:-}" || -z "${KAGGLE_KEY:-}" ]]; then
   fi
 fi
 
-TMP_DIR="/tmp/kaggle_dataset_download"
+TMP_DIR="/content/.kaggle_download"
+ZIP_DIR="${TMP_DIR}/zip"
 rm -rf "${TMP_DIR}"
-mkdir -p "${TMP_DIR}"
+mkdir -p "${ZIP_DIR}"
 
 if [[ "${CLEAN_TARGET}" == true ]]; then
   if [[ "${RAW_DATASET_DIR}" == /content/drive/* ]]; then
@@ -88,19 +89,60 @@ fi
 mkdir -p "${RAW_DATASET_DIR}"
 
 echo "Downloading Kaggle dataset: ${KAGGLE_DATASET_SLUG}"
-kaggle datasets download -d "${KAGGLE_DATASET_SLUG}" -p "${TMP_DIR}" --unzip --force
+kaggle datasets download -d "${KAGGLE_DATASET_SLUG}" -p "${ZIP_DIR}" --force
 
-# Move extracted content into RAW_DATASET_DIR. If archive has one top-level folder, flatten it.
-shopt -s dotglob nullglob
-entries=("${TMP_DIR}"/*)
-if [[ ${#entries[@]} -eq 1 && -d "${entries[0]}" ]]; then
-  cp -R "${entries[0]}"/* "${RAW_DATASET_DIR}"/
-else
-  for item in "${TMP_DIR}"/*; do
-    cp -R "${item}" "${RAW_DATASET_DIR}"/
-  done
+shopt -s nullglob
+zip_files=("${ZIP_DIR}"/*.zip)
+shopt -u nullglob
+if [[ ${#zip_files[@]} -ne 1 ]]; then
+  echo "Expected one downloaded zip in ${ZIP_DIR}, found ${#zip_files[@]}" >&2
+  exit 1
 fi
-shopt -u dotglob nullglob
+ZIP_PATH="${zip_files[0]}"
+
+if ! command -v unzip >/dev/null 2>&1; then
+  echo "unzip command not found in runtime." >&2
+  exit 1
+fi
+
+TOP_LEVEL_DIR="$(python - "${ZIP_PATH}" <<'PY'
+import sys
+import zipfile
+from pathlib import PurePosixPath
+
+zip_path = sys.argv[1]
+top_levels = set()
+with zipfile.ZipFile(zip_path) as zf:
+    for name in zf.namelist():
+        parts = PurePosixPath(name).parts
+        if not parts:
+            continue
+        first = parts[0]
+        if first in ("", "__MACOSX"):
+            continue
+        top_levels.add(first)
+
+if len(top_levels) == 1:
+    print(next(iter(top_levels)))
+PY
+)"
+
+echo "Extracting dataset archive to disk: ${ZIP_PATH}"
+unzip -oq "${ZIP_PATH}" -d "${RAW_DATASET_DIR}"
+rm -f "${ZIP_PATH}"
+
+# If the archive is wrapped in a single top-level folder, flatten it in place.
+if [[ -n "${TOP_LEVEL_DIR}" && -d "${RAW_DATASET_DIR}/${TOP_LEVEL_DIR}" ]]; then
+  shopt -s dotglob nullglob
+  wrapped_entries=("${RAW_DATASET_DIR}/${TOP_LEVEL_DIR}"/*)
+  if [[ ${#wrapped_entries[@]} -gt 0 ]]; then
+    mv "${RAW_DATASET_DIR}/${TOP_LEVEL_DIR}"/* "${RAW_DATASET_DIR}/"
+  fi
+  shopt -u dotglob nullglob
+  rmdir "${RAW_DATASET_DIR}/${TOP_LEVEL_DIR}" 2>/dev/null || true
+fi
+
+rm -rf "${TMP_DIR}"
 
 echo "Kaggle dataset ready at: ${RAW_DATASET_DIR}"
 find "${RAW_DATASET_DIR}" -maxdepth 2 -type d | head -n 30
