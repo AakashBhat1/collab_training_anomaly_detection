@@ -1,0 +1,51 @@
+## Pass 2026-04-09-01
+- Updated:
+  - `dataset_split.py`
+  - `tests/test_split_contract.py`
+  - `bootstrap_colab.sh`
+  - `requirements-colab.txt`
+  - `README.md`
+- Added:
+  - `docs/project_working_session/REPO_CONTEXT.md`
+  - `docs/project_working_session/CURRENT_STEP.md`
+  - `docs/project_working_session/changes.md`
+- Notes:
+  - Added deterministic frame-materialization support for raw video clips (`.mp4`, `.avi`, `.mov`, `.mkv`, `.webm`) so Colab training consumes frame directories consistently.
+  - Added split rematerialization cleanup to prevent stale train/val/test leakage across runs.
+  - Added split-plan key validation (`train`/`val`/`test` only) to fail fast on malformed plans.
+  - Added split-ratio bounds validation to reject negative, NaN/inf, or >1 ratio values before planning.
+  - Added focused dataset split contract tests including media discovery, manifest serialization, invalid-key handling, unsupported extensions, and mp4 extraction behavior.
+  - Hardened Colab bootstrap path detection to support both `backend/collab_scripts` and root-level `collab_scripts` layouts.
+  - Added `opencv-python-headless` for video frame extraction and `pytest-cov` for verification coverage runs.
+- Verification:
+  - `python -m pytest collab_scripts/tests -q` => 17 passed.
+  - `python -m pytest collab_scripts/tests --cov=collab_scripts --cov-report=term-missing -q` => 17 passed.
+  - Coverage on materially changed module `dataset_split.py`: 92%.
+- Security/behavior impact:
+  - No secrets or auth paths changed.
+  - Behavior changed in dataset prep only: file clips are normalized into frame directories and split folders are rebuilt each run.
+
+## Pass 2026-04-09-02
+- Updated:
+  - `README.md`
+  - `docs/project_working_session/REPO_CONTEXT.md`
+  - `docs/project_working_session/CURRENT_STEP.md`
+  - `docs/project_working_session/changes.md`
+- Added:
+  - `colab_clone_and_bootstrap.sh`
+  - `colab_run_training.sh`
+  - `colab_export_artifacts.sh`
+- Notes:
+  - Added GitHub-first Colab helper scripts to support clone/bootstrap, pipeline run, and export packaging with minimal manual steps.
+  - Added README usage examples for the new shell wrappers.
+  - Export helper now bundles artifacts, key checkpoints, and `split_manifest.json` into a single `.tgz` handoff package.
+  - Hardened run-wrapper parsing to support both positional repo root and flag-first calls (for example `--config` first).
+  - Hardened export-wrapper validation to fail if required model artifacts are missing.
+  - Improved clone-wrapper behavior for non-git existing target directories.
+- Verification:
+  - `bash -n bootstrap_colab.sh; bash -n colab_clone_and_bootstrap.sh; bash -n colab_run_training.sh; bash -n colab_export_artifacts.sh` => success.
+  - `python -m pytest collab_scripts/tests -q` => 17 passed.
+  - Final reviewer pass on helper scripts => no findings.
+- Security/behavior impact:
+  - No secret handling changes.
+  - Added script-level automation only; Python training contracts unchanged.

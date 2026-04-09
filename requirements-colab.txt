@@ -1,0 +1,13 @@
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
+numpy==1.26.4
+pillow==10.2.0
+opencv-python-headless==4.10.0.84
+scikit-learn==1.5.2
+tqdm==4.66.5
+onnx==1.17.0
+openvino==2024.6.0
+openvino-dev==2024.6.0
+pytest==9.0.3
+pytest-cov==7.1.0

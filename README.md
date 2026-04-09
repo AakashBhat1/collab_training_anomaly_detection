@@ -1,0 +1,156 @@
+# Colab Training Handoff (MVP)
+
+This folder is the GitHub-uploadable training/export bundle for the MVP action classifier:
+- classes: `fight`, `theft`, `intrusion`, `normal`
+- pipeline: split -> train -> evaluate -> export ONNX/OpenVINO
+- target runtime artifact: OpenVINO IR (`.xml` + `.bin`)
+
+## 1) Expected Data Layout
+
+Raw clips under `/content/raw_dataset`:
+
+```text
+/content/raw_dataset/
+  fight/
+    clip_001/               # preferred: folder of extracted frames
+      0001.jpg
+      ...
+    clip_002.mp4            # supported: converted to frames during prepare step
+  theft/
+  intrusion/
+  normal/
+```
+
+Notes:
+- During `prepare_dataset`, every source clip is materialized as a frame directory under `train|val|test/<class>/<clip_id>/`.
+- Re-running `prepare_dataset` rebuilds split folders from scratch to prevent stale data leakage.
+
+Prepared split output (generated automatically):
+
+```text
+/content/dataset/
+  train/<class>/...
+  val/<class>/...
+  test/<class>/...
+  split_manifest.json
+```
+
+## 2) Colab Setup
+
+From Colab:
+
+```bash
+git clone <your-repo-url> /content/intruder_detection_system
+cd /content/intruder_detection_system
+bash backend/collab_scripts/bootstrap_colab.sh /content/intruder_detection_system
+```
+
+If `collab_scripts` is at repository root (no `backend/` folder):
+
+```bash
+git clone <your-repo-url> /content/intruder_detection_system
+cd /content/intruder_detection_system
+bash collab_scripts/bootstrap_colab.sh /content/intruder_detection_system
+```
+
+GitHub-first helper scripts (recommended):
+
+```bash
+# 1) clone + bootstrap from GitHub
+bash collab_scripts/colab_clone_and_bootstrap.sh \
+  https://github.com/<org>/<repo>.git \
+  /content/intruder_detection_system \
+  main
+
+# 2) run split/train/eval/export with auto-resume
+bash collab_scripts/colab_run_training.sh /content/intruder_detection_system
+
+# with explicit config and passthrough pipeline flags
+bash collab_scripts/colab_run_training.sh \
+  /content/intruder_detection_system \
+  --config collab_scripts/pipeline_config.json \
+  --skip-export
+
+# 3) package outputs for download/handoff
+bash collab_scripts/colab_export_artifacts.sh \
+  /content/intruder_detection_system \
+  /content/action_model_export.tgz
+```
+
+Helper scripts added in this package:
+- `collab_scripts/colab_clone_and_bootstrap.sh`
+- `collab_scripts/colab_run_training.sh`
+- `collab_scripts/colab_export_artifacts.sh`
+
+If using Drive-backed checkpoint resume:
+
+```python
+from google.colab import drive
+drive.mount("/content/drive")
+```
+
+## 3) Configure Paths/Hyperparams
+
+Edit the config file that matches your layout:
+- backend layout: `backend/collab_scripts/pipeline_config.json`
+- root layout: `collab_scripts/pipeline_config.json`
+
+Important fields:
+- `paths.raw_dataset_dir`
+- `paths.dataset_dir`
+- `paths.checkpoint_dir`
+- `paths.drive_checkpoint_dir`
+- `paths.artifact_dir`
+- `model_version`
+
+## 4) Run Full Pipeline
+
+Run from the parent of the `collab_scripts` package:
+- backend layout: `/content/intruder_detection_system/backend`
+- root layout: `/content/intruder_detection_system`
+
+```bash
+python -m collab_scripts.run_pipeline --auto-resume
+```
+
+Step-by-step alternative:
+
+```bash
+python -m collab_scripts.prepare_dataset --config collab_scripts/pipeline_config.json
+python -m collab_scripts.train_action_model --config collab_scripts/pipeline_config.json --auto-resume
+python -m collab_scripts.evaluate_action_model --config collab_scripts/pipeline_config.json
+python -m collab_scripts.export_openvino --config collab_scripts/pipeline_config.json
+```
+
+## 5) Outputs
+
+- checkpoints:
+  - `/content/checkpoints/last.pt`
+  - `/content/checkpoints/best.pt`
+- evaluation:
+  - `/content/artifacts/evaluation_report.json`
+- model artifacts:
+  - `/content/artifacts/action_model_v<version>_<date>.onnx`
+  - `/content/artifacts/action_model_v<version>_<date>.xml`
+  - `/content/artifacts/action_model_v<version>_<date>.bin`
+- packaged export bundle (if using helper script):
+  - `/content/action_model_export.tgz`
+
+## 6) Verification Commands (TDD Loop)
+
+From the package parent directory:
+
+```bash
+python -m pytest collab_scripts/tests -k split -q
+python -m pytest collab_scripts/tests -q
+python -m pytest collab_scripts/tests --cov=collab_scripts --cov-report=term-missing
+```
+
+## 7) Backend Handoff
+
+Copy exported OpenVINO files into:
+
+`backend/yolo_classifier/models/`
+
+Use the same version string in backend runtime config so alerts and metadata remain traceable.
+

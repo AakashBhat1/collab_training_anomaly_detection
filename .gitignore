@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pt
+*.onnx
+*.xml
+*.bin
+*.jsonl
+checkpoints/
+artifacts/
+dataset/
+raw_dataset/

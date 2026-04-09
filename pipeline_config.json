@@ -1,0 +1,32 @@
+{
+  "model_version": "0.1.0",
+  "classes": [
+    "fight",
+    "theft",
+    "intrusion",
+    "normal"
+  ],
+  "splits": {
+    "train": 0.7,
+    "val": 0.15,
+    "test": 0.15
+  },
+  "sequence_length": 16,
+  "crop_size": 224,
+  "batch_size": 8,
+  "epochs": 30,
+  "learning_rate": 0.0001,
+  "confidence_threshold": 0.6,
+  "smoothing_window": 5,
+  "n_of_m": {
+    "n": 3,
+    "m": 5
+  },
+  "paths": {
+    "raw_dataset_dir": "/content/raw_dataset",
+    "dataset_dir": "/content/dataset",
+    "checkpoint_dir": "/content/checkpoints",
+    "drive_checkpoint_dir": "/content/drive/MyDrive/action_model_checkpoints",
+    "artifact_dir": "/content/artifacts"
+  }
+}
