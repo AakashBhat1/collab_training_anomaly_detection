@@ -4,13 +4,13 @@ set -euo pipefail
 INPUT_ROOT="${1:-}"
 
 if [[ -n "${INPUT_ROOT}" ]]; then
-	SCRIPT_DIR="${INPUT_ROOT}/scripts"
-	if [[ ! -f "${SCRIPT_DIR}/bootstrap_colab.sh" ]]; then
-		echo "Unable to locate scripts/bootstrap_colab.sh under: ${INPUT_ROOT}" >&2
-		exit 1
-	fi
+  SCRIPT_DIR="${INPUT_ROOT}/scripts"
+  if [[ ! -f "${SCRIPT_DIR}/bootstrap_colab.sh" ]]; then
+    echo "Unable to locate scripts/bootstrap_colab.sh under: ${INPUT_ROOT}" >&2
+    exit 1
+  fi
 else
-	SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 fi
 
 PKG_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"

@@ -117,8 +117,7 @@ Important fields:
 ## 4) Run Full Pipeline
 
 Run from the parent of the `collab_scripts` package:
-- backend layout: `/content/collab_scripts/backend`
-- root layout: `/content/collab_scripts`
+- `/content`
 
 ```bash
 python -m collab_scripts.run_pipeline --auto-resume

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+PACKAGE_NAME="collab_scripts"
 REPO_ROOT="/content/collab_scripts"
 if [[ $# -gt 0 && "${1}" != -* ]]; then
   REPO_ROOT="$1"
@@ -55,7 +56,11 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Repo root IS the package — run python -m from parent dir
+if [[ "$(basename "${REPO_ROOT}")" != "${PACKAGE_NAME}" ]]; then
+  echo "Repo checkout directory must be named ${PACKAGE_NAME}: ${REPO_ROOT}" >&2
+  exit 1
+fi
+
 WORK_ROOT="$(cd "${REPO_ROOT}/.." && pwd)"
 DEFAULT_CONFIG="${REPO_ROOT}/pipeline_config.json"
 
@@ -91,7 +96,7 @@ PY
 )"
   fi
 
-  PULL_COMMAND=(bash "${PULL_SCRIPT}" "${KAGGLE_DATASET}" "${RAW_DATASET_DIR}")
+  PULL_COMMAND=(bash "${PULL_SCRIPT}" "${KAGGLE_DATASET}" --raw-dataset-dir "${RAW_DATASET_DIR}")
   if [[ "${KAGGLE_CLEAN}" == true ]]; then
     PULL_COMMAND+=(--clean)
   fi

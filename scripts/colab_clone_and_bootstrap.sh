@@ -11,6 +11,11 @@ REPO_URL="$1"
 TARGET_DIR="${2:-/content/collab_scripts}"
 BRANCH="${3:-}"
 
+if [[ "$(basename "${TARGET_DIR}")" != "collab_scripts" ]]; then
+  echo "Target directory must end with /collab_scripts: ${TARGET_DIR}" >&2
+  exit 1
+fi
+
 if [[ -d "${TARGET_DIR}" && ! -d "${TARGET_DIR}/.git" ]]; then
   if [[ -z "$(ls -A "${TARGET_DIR}" 2>/dev/null)" ]]; then
     rmdir "${TARGET_DIR}"
