@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT="/content/intruder_detection_system"
+REPO_ROOT="/content/collab_training_anomaly_detection"
 if [[ $# -gt 0 && "${1}" != -* ]]; then
   REPO_ROOT="$1"
   shift

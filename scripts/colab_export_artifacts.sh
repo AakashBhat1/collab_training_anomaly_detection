@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT="${1:-/content/intruder_detection_system}"
+REPO_ROOT="${1:-/content/collab_training_anomaly_detection}"
 OUTPUT_ARCHIVE="${2:-/content/action_model_export.tgz}"
 
 if [[ -d "${REPO_ROOT}/backend/collab_scripts" ]]; then

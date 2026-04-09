@@ -40,17 +40,17 @@ Prepared split output (generated automatically):
 From Colab:
 
 ```bash
-git clone <your-repo-url> /content/intruder_detection_system
-cd /content/intruder_detection_system
-bash backend/collab_scripts/scripts/bootstrap_colab.sh /content/intruder_detection_system
+git clone <your-repo-url> /content/collab_training_anomaly_detection
+cd /content/collab_training_anomaly_detection
+bash backend/collab_scripts/scripts/bootstrap_colab.sh /content/collab_training_anomaly_detection
 ```
 
 If `collab_scripts` is at repository root (no `backend/` folder):
 
 ```bash
-git clone <your-repo-url> /content/intruder_detection_system
-cd /content/intruder_detection_system
-bash collab_scripts/scripts/bootstrap_colab.sh /content/intruder_detection_system
+git clone <your-repo-url> /content/collab_training_anomaly_detection
+cd /content/collab_training_anomaly_detection
+bash collab_scripts/scripts/bootstrap_colab.sh /content/collab_training_anomaly_detection
 ```
 
 GitHub-first helper scripts (recommended):
@@ -59,28 +59,28 @@ GitHub-first helper scripts (recommended):
 # 1) clone + bootstrap from GitHub
 bash collab_scripts/scripts/colab_clone_and_bootstrap.sh \
   https://github.com/<org>/<repo>.git \
-  /content/intruder_detection_system \
+  /content/collab_training_anomaly_detection \
   main
 
 # 2) run split/train/eval/export with auto-resume
-bash collab_scripts/scripts/colab_run_training.sh /content/intruder_detection_system
+bash collab_scripts/scripts/colab_run_training.sh /content/collab_training_anomaly_detection
 
 # optional: pull dataset from Kaggle before training
 bash collab_scripts/scripts/colab_run_training.sh \
-  /content/intruder_detection_system \
+  /content/collab_training_anomaly_detection \
   --config collab_scripts/pipeline_config.json \
   --kaggle-dataset <owner>/<dataset-slug> \
   --kaggle-clean
 
 # with explicit config and passthrough pipeline flags
 bash collab_scripts/scripts/colab_run_training.sh \
-  /content/intruder_detection_system \
+  /content/collab_training_anomaly_detection \
   --config collab_scripts/pipeline_config.json \
   --skip-export
 
 # 3) package outputs for download/handoff
 bash collab_scripts/scripts/colab_export_artifacts.sh \
-  /content/intruder_detection_system \
+  /content/collab_training_anomaly_detection \
   /content/action_model_export.tgz
 ```
 
@@ -126,8 +126,8 @@ Important fields:
 ## 4) Run Full Pipeline
 
 Run from the parent of the `collab_scripts` package:
-- backend layout: `/content/intruder_detection_system/backend`
-- root layout: `/content/intruder_detection_system`
+- backend layout: `/content/collab_training_anomaly_detection/backend`
+- root layout: `/content/collab_training_anomaly_detection`
 
 ```bash
 python -m collab_scripts.run_pipeline --auto-resume

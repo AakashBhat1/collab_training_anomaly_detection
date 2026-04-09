@@ -3,12 +3,12 @@ set -euo pipefail
 
 if [[ $# -lt 1 ]]; then
   echo "Usage: $0 <github_repo_url> [target_dir] [branch]" >&2
-  echo "Example: $0 https://github.com/org/repo.git /content/intruder_detection_system main" >&2
+  echo "Example: $0 https://github.com/org/repo.git /content/collab_training_anomaly_detection main" >&2
   exit 1
 fi
 
 REPO_URL="$1"
-TARGET_DIR="${2:-/content/intruder_detection_system}"
+TARGET_DIR="${2:-/content/collab_training_anomaly_detection}"
 BRANCH="${3:-}"
 
 if [[ -d "${TARGET_DIR}" && ! -d "${TARGET_DIR}/.git" ]]; then

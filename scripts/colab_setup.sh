@@ -6,7 +6,7 @@ set -euo pipefail
 #
 # Options:
 #   --branch <branch>             Git branch (default: main)
-#   --repo-dir <path>             Clone target (default: /content/intruder_detection_system)
+#   --repo-dir <path>             Clone target (default: /content/collab_training_anomaly_detection)
 #   --raw-dataset-dir <path>      Raw clips location (default: /content/raw_dataset)
 #   --dataset-dir <path>          Prepared splits (default: /content/dataset)
 #   --checkpoint-dir <path>       Local checkpoints (default: /content/checkpoints)
@@ -24,7 +24,7 @@ fi
 REPO_URL="$1"; shift
 
 BRANCH="main"
-REPO_DIR="/content/intruder_detection_system"
+REPO_DIR="/content/collab_training_anomaly_detection"
 RAW_DATASET_DIR="/content/raw_dataset"
 DATASET_DIR="/content/dataset"
 CHECKPOINT_DIR="/content/checkpoints"
