@@ -31,12 +31,12 @@ else
   echo "Repository already exists at ${TARGET_DIR}; skipping clone."
 fi
 
-if [[ -f "${TARGET_DIR}/backend/collab_scripts/bootstrap_colab.sh" ]]; then
-  BOOTSTRAP_SCRIPT="${TARGET_DIR}/backend/collab_scripts/bootstrap_colab.sh"
-elif [[ -f "${TARGET_DIR}/collab_scripts/bootstrap_colab.sh" ]]; then
-  BOOTSTRAP_SCRIPT="${TARGET_DIR}/collab_scripts/bootstrap_colab.sh"
+if [[ -f "${TARGET_DIR}/backend/collab_scripts/scripts/bootstrap_colab.sh" ]]; then
+  BOOTSTRAP_SCRIPT="${TARGET_DIR}/backend/collab_scripts/scripts/bootstrap_colab.sh"
+elif [[ -f "${TARGET_DIR}/collab_scripts/scripts/bootstrap_colab.sh" ]]; then
+  BOOTSTRAP_SCRIPT="${TARGET_DIR}/collab_scripts/scripts/bootstrap_colab.sh"
 else
-  echo "Could not find bootstrap_colab.sh under ${TARGET_DIR}" >&2
+  echo "Could not find scripts/bootstrap_colab.sh under ${TARGET_DIR}" >&2
   exit 1
 fi
 

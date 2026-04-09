@@ -5,6 +5,8 @@ __pycache__/
 *.xml
 *.bin
 *.jsonl
+.venv/
+.pytest_cache/
 checkpoints/
 artifacts/
 dataset/

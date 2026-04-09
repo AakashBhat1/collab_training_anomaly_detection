@@ -20,8 +20,8 @@ Owner: GitHub Copilot
 - Added working-session docs and verification log.
 
 ## Next Exact Action
-- Command: `open and run colab_training_automation.ipynb from top to bottom in Colab (set GITHUB_REPO_URL and Kaggle credentials first)`
-- File to edit next: `colab_training_automation.ipynb`
+- Command: `open and run notebooks/colab_training_automation.ipynb from top to bottom in Colab (set GITHUB_REPO_URL and Kaggle credentials first)`
+- File to edit next: `notebooks/colab_training_automation.ipynb`
 - Expected result: Dataset is pulled from Kaggle automatically, training runs with Drive checkpoint backups, and final cells report resume status.
 
 ## If Blocked

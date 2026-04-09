@@ -4,12 +4,12 @@ set -euo pipefail
 INPUT_ROOT="${1:-}"
 
 if [[ -n "${INPUT_ROOT}" ]]; then
-	if [[ -f "${INPUT_ROOT}/backend/collab_scripts/bootstrap_colab.sh" ]]; then
-		SCRIPT_DIR="${INPUT_ROOT}/backend/collab_scripts"
-	elif [[ -f "${INPUT_ROOT}/collab_scripts/bootstrap_colab.sh" ]]; then
-		SCRIPT_DIR="${INPUT_ROOT}/collab_scripts"
-	elif [[ -f "${INPUT_ROOT}/bootstrap_colab.sh" ]]; then
-		SCRIPT_DIR="${INPUT_ROOT}"
+	if [[ -f "${INPUT_ROOT}/backend/collab_scripts/scripts/bootstrap_colab.sh" ]]; then
+		SCRIPT_DIR="${INPUT_ROOT}/backend/collab_scripts/scripts"
+	elif [[ -f "${INPUT_ROOT}/collab_scripts/scripts/bootstrap_colab.sh" ]]; then
+		SCRIPT_DIR="${INPUT_ROOT}/collab_scripts/scripts"
+	elif [[ -f "${INPUT_ROOT}/scripts/bootstrap_colab.sh" ]]; then
+		SCRIPT_DIR="${INPUT_ROOT}/scripts"
 	else
 		echo "Unable to locate collab_scripts under: ${INPUT_ROOT}" >&2
 		exit 1
@@ -18,11 +18,12 @@ else
 	SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 fi
 
-WORK_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+PKG_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+WORK_ROOT="$(cd "${PKG_DIR}/.." && pwd)"
 
 cd "${WORK_ROOT}"
 python -m pip install --upgrade pip
-python -m pip install -r "${SCRIPT_DIR}/requirements-colab.txt"
+python -m pip install -r "${PKG_DIR}/requirements-colab.txt"
 
 mkdir -p /content/raw_dataset
 mkdir -p /content/dataset

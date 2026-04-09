@@ -1,3 +1,23 @@
+## Pass 2026-04-09-05
+- Restructured:
+  - Moved shell scripts (`bootstrap_colab.sh`, `colab_clone_and_bootstrap.sh`, `colab_run_training.sh`, `colab_export_artifacts.sh`, `colab_pull_kaggle_dataset.sh`) into `scripts/` subdirectory.
+  - Moved `colab_training_automation.ipynb` into `notebooks/` subdirectory.
+- Updated:
+  - All shell scripts updated with new path detection (`collab_scripts/scripts/` instead of `collab_scripts/`).
+  - `notebooks/colab_training_automation.ipynb` updated with new bootstrap and run script candidate paths.
+  - `README.md` updated with all new script paths and notebook location.
+  - `.gitignore` added `.venv/` and `.pytest_cache/` entries.
+  - `docs/project_working_session/REPO_CONTEXT.md` updated architecture overview with `scripts/` and `notebooks/` organization.
+  - `docs/project_working_session/CURRENT_STEP.md` updated notebook path.
+- Notes:
+  - Python source modules and imports unchanged — the package structure (`from collab_scripts.xxx`) is unaffected.
+  - Shell scripts, notebook, and non-Python files are no longer mixed with Python modules at package root.
+- Verification:
+  - `bash -n scripts/*.sh` => syntax check.
+  - `python -m pytest collab_scripts/tests -q` => existing tests.
+- Security/behavior impact:
+  - No logic or auth changes. File reorganization only.
+
 ## Pass 2026-04-09-01
 - Updated:
   - `dataset_split.py`

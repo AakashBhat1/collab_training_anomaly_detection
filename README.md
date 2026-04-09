@@ -42,7 +42,7 @@ From Colab:
 ```bash
 git clone <your-repo-url> /content/intruder_detection_system
 cd /content/intruder_detection_system
-bash backend/collab_scripts/bootstrap_colab.sh /content/intruder_detection_system
+bash backend/collab_scripts/scripts/bootstrap_colab.sh /content/intruder_detection_system
 ```
 
 If `collab_scripts` is at repository root (no `backend/` folder):
@@ -50,45 +50,45 @@ If `collab_scripts` is at repository root (no `backend/` folder):
 ```bash
 git clone <your-repo-url> /content/intruder_detection_system
 cd /content/intruder_detection_system
-bash collab_scripts/bootstrap_colab.sh /content/intruder_detection_system
+bash collab_scripts/scripts/bootstrap_colab.sh /content/intruder_detection_system
 ```
 
 GitHub-first helper scripts (recommended):
 
 ```bash
 # 1) clone + bootstrap from GitHub
-bash collab_scripts/colab_clone_and_bootstrap.sh \
+bash collab_scripts/scripts/colab_clone_and_bootstrap.sh \
   https://github.com/<org>/<repo>.git \
   /content/intruder_detection_system \
   main
 
 # 2) run split/train/eval/export with auto-resume
-bash collab_scripts/colab_run_training.sh /content/intruder_detection_system
+bash collab_scripts/scripts/colab_run_training.sh /content/intruder_detection_system
 
 # optional: pull dataset from Kaggle before training
-bash collab_scripts/colab_run_training.sh \
+bash collab_scripts/scripts/colab_run_training.sh \
   /content/intruder_detection_system \
   --config collab_scripts/pipeline_config.json \
   --kaggle-dataset <owner>/<dataset-slug> \
   --kaggle-clean
 
 # with explicit config and passthrough pipeline flags
-bash collab_scripts/colab_run_training.sh \
+bash collab_scripts/scripts/colab_run_training.sh \
   /content/intruder_detection_system \
   --config collab_scripts/pipeline_config.json \
   --skip-export
 
 # 3) package outputs for download/handoff
-bash collab_scripts/colab_export_artifacts.sh \
+bash collab_scripts/scripts/colab_export_artifacts.sh \
   /content/intruder_detection_system \
   /content/action_model_export.tgz
 ```
 
 Helper scripts added in this package:
-- `collab_scripts/colab_clone_and_bootstrap.sh`
-- `collab_scripts/colab_run_training.sh`
-- `collab_scripts/colab_export_artifacts.sh`
-- `collab_scripts/colab_pull_kaggle_dataset.sh`
+- `collab_scripts/scripts/colab_clone_and_bootstrap.sh`
+- `collab_scripts/scripts/colab_run_training.sh`
+- `collab_scripts/scripts/colab_export_artifacts.sh`
+- `collab_scripts/scripts/colab_pull_kaggle_dataset.sh`
 
 Kaggle credentials:
 - Set `KAGGLE_USERNAME` and `KAGGLE_KEY` environment variables in Colab, or
@@ -97,7 +97,7 @@ Kaggle credentials:
 KaggleHub support:
 - `requirements-colab.txt` now includes `kagglehub[pandas-datasets]`.
 - The automation notebook includes optional `kagglehub.load_dataset(...)` support using your dataset slug and file path.
-- In `colab_training_automation.ipynb`, set:
+- In `notebooks/colab_training_automation.ipynb`, set:
   - `USE_KAGGLEHUB_PANDAS_PREVIEW = True`
   - `KAGGLEHUB_FILE_PATH = "<path-inside-dataset>"`
   - optional `KAGGLEHUB_SQL_QUERY`

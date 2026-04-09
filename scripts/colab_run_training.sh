@@ -58,11 +58,11 @@ done
 if [[ -d "${REPO_ROOT}/backend/collab_scripts" ]]; then
   WORK_ROOT="${REPO_ROOT}/backend"
   DEFAULT_CONFIG="collab_scripts/pipeline_config.json"
-  PULL_SCRIPT="${REPO_ROOT}/backend/collab_scripts/colab_pull_kaggle_dataset.sh"
+  PULL_SCRIPT="${REPO_ROOT}/backend/collab_scripts/scripts/colab_pull_kaggle_dataset.sh"
 elif [[ -d "${REPO_ROOT}/collab_scripts" ]]; then
   WORK_ROOT="${REPO_ROOT}"
   DEFAULT_CONFIG="collab_scripts/pipeline_config.json"
-  PULL_SCRIPT="${REPO_ROOT}/collab_scripts/colab_pull_kaggle_dataset.sh"
+  PULL_SCRIPT="${REPO_ROOT}/collab_scripts/scripts/colab_pull_kaggle_dataset.sh"
 else
   echo "Could not find collab_scripts in ${REPO_ROOT}" >&2
   exit 1
