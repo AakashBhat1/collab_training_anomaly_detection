@@ -22,6 +22,8 @@
   - `colab_clone_and_bootstrap.sh` clones from GitHub and runs bootstrap in one command.
   - `colab_run_training.sh` runs full training pipeline with auto-resume defaults.
   - `colab_export_artifacts.sh` packages artifacts/checkpoints/split manifest into a portable archive.
+- Colab automation notebook:
+  - `colab_training_automation.ipynb` provides an end-to-end notebook flow for Drive mount, GitHub clone/bootstrap, config path updates, training run, Drive backup checks, and resume-status checks.
 
 ## Key Dependencies
 | Package | Purpose |
